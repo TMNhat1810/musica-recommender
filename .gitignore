@@ -1,5 +1,5 @@
 .venv
-qdrant
+./qdrant
 data
 
 __pycache__/
