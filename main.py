@@ -1,13 +1,15 @@
 from fastapi import FastAPI
+from app.api.handler import root_handle, query_Search_handle
+
 
 app = FastAPI()
 
 
 @app.get("/")
 def read_root():
-    return {"message": "Hello, FastAPI!"}
+    return root_handle()
 
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: str = None):
-    return {"item_id": item_id, "q": q}
+@app.get("/vector/query")
+def read_item(id: str = None, k: int = 5):
+    return query_Search_handle(id, k)
