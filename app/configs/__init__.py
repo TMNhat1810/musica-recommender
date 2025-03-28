@@ -1,1 +1,1 @@
-from device import device
+from app.configs.device import device

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from app.api.handler import root_handle, query_Search_handle
+from app.api.handler import root_handle
+from app.api.routers import vector
 
 
 app = FastAPI()
@@ -10,6 +11,7 @@ def read_root():
     return root_handle()
 
 
-@app.get("/vector/query")
-def read_item(id: str = None, k: int = 5):
-    return query_Search_handle(id, k)
+app.include_router(vector.router)
+
+
+print("Swagger Docs: http://localhost:8000/docs")

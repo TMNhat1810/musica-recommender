@@ -1,5 +1,6 @@
 from app.common.constants import FEATURE_COLLECTION_NAME
 from app.services.qdrant import qdrant
+from qdrant_client.models import PointStruct
 
 
 class QdrantService:
@@ -27,3 +28,36 @@ class QdrantService:
         )
 
         return {"response": search_results}
+
+    @staticmethod
+    def upload_audio_vector(id, title_vector, feature_vector):
+        qdrant.upsert(
+            collection_name="audio_features",
+            points=[
+                PointStruct(
+                    id=id,
+                    vector={
+                        "title_vector": title_vector,
+                        "audio_vector": feature_vector,
+                    },
+                    payload={"id": id},
+                )
+            ],
+        )
+
+    @staticmethod
+    def upload_video_vector(id, title_vector, feature_vectors):
+        qdrant.upsert(
+            collection_name="video_features",
+            points=[
+                PointStruct(
+                    id=id,
+                    vector={
+                        "title_vector": title_vector,
+                        "video_vector": feature_vectors[0],
+                        "audio_vector": feature_vectors[1],
+                    },
+                    payload={"id": id},
+                )
+            ],
+        )
