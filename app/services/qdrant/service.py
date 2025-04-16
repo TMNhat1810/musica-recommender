@@ -1,6 +1,6 @@
 from app.common.constants import FEATURE_COLLECTION_NAME
 from app.services.qdrant import qdrant
-from qdrant_client.models import PointStruct
+from qdrant_client.models import PointStruct, Filter, FieldCondition, MatchValue
 
 
 class QdrantService:
@@ -61,3 +61,41 @@ class QdrantService:
                 )
             ],
         )
+
+    @staticmethod
+    def delete_audio_vector(id: str):
+        result, _ = qdrant.scroll(
+            collection_name="audio_features",
+            limit=1,
+            with_payload=False,
+            with_vectors=False,
+            offset=None,
+            scroll_filter=Filter(
+                must=[FieldCondition(key="id", match=MatchValue(value=id))]
+            ),
+        )
+
+        if result:
+            qdrant.delete(collection_name="audio_features", points_selector=[id])
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def delete_video_vector(id: str):
+        result, _ = qdrant.scroll(
+            collection_name="video_features",
+            limit=1,
+            with_payload=False,
+            with_vectors=False,
+            offset=None,
+            scroll_filter=Filter(
+                must=[FieldCondition(key="id", match=MatchValue(value=id))]
+            ),
+        )
+
+        if result:
+            qdrant.delete(collection_name="video_features", points_selector=[id])
+            return True
+        else:
+            return False

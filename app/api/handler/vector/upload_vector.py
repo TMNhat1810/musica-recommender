@@ -1,9 +1,7 @@
-from http.client import HTTPResponse
-from tkinter.tix import ExFileSelectBox
 from fastapi import HTTPException, UploadFile
 from app.configs.allowed_mimetype import AUDIO_MIMETYPES, VIDEO_MIMETYPES
 from app.services.qdrant.service import QdrantService
-from app.utils.extract_embedding import (
+from app.utils.embedding import (
     extract_audiofile_embedding,
     extract_text_embedding,
     extract_videofile_embedding,
@@ -28,4 +26,6 @@ async def upload_vector_handle(id: str, title: str, media: UploadFile):
     else:
         QdrantService.upload_audio_vector(id, title_vector, feature_vectors)
 
-    return {"success": True}
+    return {
+        "success": True,
+    }
