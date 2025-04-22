@@ -10,7 +10,7 @@ router = APIRouter(prefix="/vector", tags=["vector"])
 
 
 @router.get("")
-async def read_item(id: str = None, k: int = 5):
+async def search_vector(id: str = None, k: int = 5):
     return query_Search_handle(id, k)
 
 

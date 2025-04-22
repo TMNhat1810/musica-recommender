@@ -8,14 +8,16 @@ class QdrantService:
         pass
 
     @staticmethod
-    def retrieve(collection_name=FEATURE_COLLECTION_NAME, id=None):
-        data = qdrant.retrieve(collection_name, [id], with_vectors=True)
+    def retrieve(collection_name: str, id: str):
+        data = qdrant.retrieve(
+            collection_name, [id], with_vectors=True, with_payload=False
+        )
         if not data:
             return None
         return data
 
     @staticmethod
-    def query_search(collection_name=FEATURE_COLLECTION_NAME, id=None, k=5):
+    def query_search(collection_name: str, id: str, page=1, limit=10):
         records = QdrantService.retrieve(collection_name, id)
         if not records:
             return None
@@ -24,7 +26,11 @@ class QdrantService:
         search_results = qdrant.search(
             collection_name=collection_name,
             query_vector=("video_vector", video_vector),
-            limit=k + 1,
+            limit=limit,
+            offset=(page - 1) * limit,
+            query_filter=Filter(
+                must_not=[FieldCondition(key="id", match=MatchValue(value=id))]
+            ),
         )
 
         return {"response": search_results}
@@ -99,3 +105,19 @@ class QdrantService:
             return True
         else:
             return False
+
+    @staticmethod
+    def search_by_title(
+        vector,
+        collection_name: str = FEATURE_COLLECTION_NAME,
+        page: int = 1,
+        limit: int = 10,
+    ):
+        search_results = qdrant.search(
+            collection_name=collection_name,
+            query_vector=("title_vector", vector),
+            limit=limit,
+            offset=(page - 1) * limit,
+        )
+
+        return {"response": search_results}
